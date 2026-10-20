@@ -1,6 +1,6 @@
 # 0008. Certified Android TV base with an open layer
 
-Status: accepted · Date: 2026-10-20
+Status: accepted, amended by [0009](0009-open-hardware-locked-by-default.md) · Date: 2026-10-20
 
 ## Context
 

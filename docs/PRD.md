@@ -1,19 +1,21 @@
 # OpenStick.tv PRD
 
-Oct 20, 2026 · @Chris · Revision 3
+Oct 20, 2026 · @Chris · Revision 4
 
-> Revision 3 changes direction: OpenStick must play Netflix, HBO Max, Disney+ and Prime in 4K. That is only possible on certified hardware with Widevine L1 and per-service certification, which requires a locked, vendor-provisioned platform. OpenStick therefore becomes a **certified Android TV device from a manufacturing partner, with an open layer on top**. The fully open Linux design (revision 2) is archived as [PRD.open-linux-edition.md](PRD.open-linux-edition.md); revision 1 as [PRD.original.md](PRD.original.md). Statements marked **(verify)** need confirmation from a partner, Google, or the services.
+> Revision 4: the device is **open hardware you can buy**. OpenStick designs and publishes the mainboard itself; a design house certifies that board, so units ship locked with full 4K, and owners can unlock their own unit (which drops subscriptions to 720p, like an unlocked Pixel). See [decision 0009](../decisions/0009-open-hardware-locked-by-default.md). The rest of revision 3 stands.
+>
+> Revision 3 changed direction: OpenStick must play Netflix, HBO Max, Disney+ and Prime in 4K. That is only possible on certified hardware with Widevine L1 and per-service certification, which requires a locked, vendor-provisioned platform. OpenStick therefore becomes a **certified Android TV device from a manufacturing partner, with an open layer on top**. The fully open Linux design (revision 2) is archived as [PRD.open-linux-edition.md](PRD.open-linux-edition.md); revision 1 as [PRD.original.md](PRD.original.md). Statements marked **(verify)** need confirmation from a partner, Google, or the services.
 
 ## Summary
 
-OpenStick.tv is a 4K streaming stick built on a certified Android TV platform, with an open layer that the big platforms don't offer: a launcher without ads, open casting receivers alongside Google Cast, Home Assistant, Matter and HomeKit control, a local API, and published enclosure and accessory designs. Subscriptions play at full quality because the device carries the certifications they require.
+OpenStick.tv is a 4K streaming stick you can buy, built on an open hardware design that is certified for Android TV, with an open layer that the big platforms don't offer: a launcher without ads, open casting receivers alongside Google Cast, Home Assistant, Matter and HomeKit control, a local API, and published enclosure and accessory designs. Subscriptions play at full quality because the device carries the certifications they require.
 
 What changed and why:
 
 1. **4K needs certification, and certification needs a locked device.** Widevine L1 requires a secure bootloader, a factory-provisioned device key and decryption inside the chip's secure area, under an agreement with Google. Netflix certifies devices through its own partner programme; HBO Max, Disney+ and Prime deliver 4K to certified Android TV / Google TV devices with L1 **(verify per service)**. An unlocked or user-modified device loses L1. So the core OS and DRM stack cannot be open or user-flashable.
 2. **The fastest route is a manufacturing partner (ODM) that already holds the certifications.** ODMs building on Amlogic, Realtek or MediaTek TV chips ship certified Android TV / Google TV reference designs and manage Google, Widevine and Netflix certification for their customers **(verify with candidates)**. OpenStick brands the device and supplies the open layer.
 3. **Google Cast becomes possible.** Certified Android TV devices can include the Google Cast receiver **(verify it is included in the partner's build)**. The open casting protocols (FCast, DLNA, AirPlay-compatible) are additions, not substitutes.
-4. **"Open" now means the layer, not the whole device.** Open: launcher (if the platform tier allows it), OpenStick apps and services, integrations, local API, enclosure and accessory CAD. Closed: bootloader, kernel, DRM, Google services, streaming apps. The site says this plainly.
+4. **Open hardware, locked software by default, owner's choice.** The mainboard, enclosure and accessories are OpenStick designs, published. Certification locks the software on the board, not the board design. Units ship locked so 4K works; an owner can unlock their own unit from settings and run any OS, losing L1 and therefore 4K subscriptions. Closed: Android core, DRM, Google services, streaming apps, and the device keys. The site says this plainly.
 5. **The biggest open question is the Google tier.** Retail Google TV requires the Google TV home screen; Android TV Operator Tier allows a custom launcher but is negotiated with Google, normally for pay-TV operators **(verify)**. This decides whether the OpenStick launcher is the home screen or an app.
 
 ## Users and positioning
@@ -42,21 +44,22 @@ What changed and why:
 - Home Assistant, Matter and HomeKit control of the TV; a documented local API.
 - HDMI-CEC, wall power, Wi-Fi 6, Bluetooth remote with voice.
 - OpenStick's own software collects no analytics. The device's Google and streaming components are disclosed clearly, with every privacy control the platform allows turned to the most private setting by default.
-- Published enclosure, remote shell and accessory CAD; published source for every OpenStick app and service.
+- Open hardware: published mainboard schematics and layout, enclosure, remote shell and accessory CAD; published source for every OpenStick app and service.
+- Owner unlock: a settings switch (off by default, wipes the device, shows a clear warning) lets owners unlock the bootloader and flash any OS **(verify Google's Android TV rules for unlockable bootloaders)**.
 - Security updates for at least five years, in the partner contract.
 
 **Non-goals (v1)**
 
-- An open or user-flashable OS. Unlocking would remove L1 and break 4K.
-- Build-it-yourself kits. Device keys are provisioned in the factory; the device is sold finished.
-- Custom silicon or a custom mainboard. The mainboard is the partner's certified design.
+- An open stock OS. The shipped OS is locked; owners may unlock, accepting the loss of 4K subscriptions.
+- Build-it-yourself kits for the 4K edition. Device keys are provisioned in the factory, so certified units are sold finished. (People can still build from the published files; their build runs at 720p.)
+- Custom silicon.
 - Replacing Google Play or Google Cast.
 
 ## Platform
 
 **Chip**
 
-A current Android TV chip with AV1, VP9, HEVC hardware decode, HDR10/HDR10+/HLG/Dolby Vision, HDMI 2.1-class output, Widevine L1 and an existing certified reference design. Candidate families: Amlogic S905X5 or S905X4, Realtek, MediaTek **(verify current certified designs and stock with each ODM)**.
+A current Android TV chip with AV1, VP9, HEVC hardware decode, HDR10/HDR10+/HLG/Dolby Vision, HDMI 2.1-class output, Widevine L1 support and a certified reference design. **New hard requirement: the chip vendor must allow OpenStick to publish its board schematics and layout.** Amlogic, the usual Android TV vendor, keeps datasheets and reference designs under NDA; Rockchip publishes more but has fewer certified Android TV designs; Realtek and MediaTek are similar to Amlogic **(verify each vendor's terms)**.
 
 **Platform tier: the decision that shapes the product**
 
@@ -72,13 +75,15 @@ Plan: ask each ODM which tiers it can certify for a new brand, and approach Goog
 
 | Layer | Open? | Notes |
 | --- | --- | --- |
-| Bootloader, kernel, Android framework, DRM | No | Partner and SoC vendor; locked for L1. GPL kernel source published as the licence requires (by the partner) |
+| Mainboard design | Yes, CERN-OHL-S-2.0 | Schematics, layout, BOM; subject to the chip vendor's terms |
+| Bootloader, kernel, Android framework, DRM | Locked on shipped units | Owner can unlock (loses 4K). GPL kernel source published |
+| Device keys (Widevine, attestation) | Never | Provisioned in the factory inside the chip's secure area |
 | Google services, Play Store, Google Cast | No | Google |
 | Streaming apps | No | Each service |
 | OpenStick launcher | Yes, Apache-2.0 | System app on the device; source on GitHub |
 | OpenStick services (local API, integrations, casting receivers) | Yes, Apache-2.0 | System or privileged apps |
 | Home Assistant integration | Yes | HACS, then HA core |
-| Enclosure, remote shell, accessories | Yes, CERN-OHL-S-2.0 | Mainboard is the partner's design |
+| Enclosure, remote shell, accessories | Yes, CERN-OHL-S-2.0 |  |
 
 ## Parity matrix
 
@@ -142,18 +147,21 @@ Product rules:
 
 ## Hardware
 
-- **Mainboard:** partner's certified design. Not open.
+- **Mainboard:** designed by OpenStick (or with a design house), derived from the chip's certified reference design, published CERN-OHL-S-2.0. Certified as the OpenStick model.
 - **Form factor:** HDMI stick or puck with short HDMI cable, decided with the partner's existing designs.
 - **Enclosure and remote shell:** designed by OpenStick, published CERN-OHL-S-2.0, manufactured by the partner. Must fit the partner's thermal and antenna constraints.
 - **Remote:** BLE with microphone (Google Assistant), dedicated OpenStick home key, find-my-remote buzzer, IR for TV power and volume.
 - **Power:** wall adapter included, certified (UL/CE).
 - **Ethernet:** decide between a bundled USB-C Ethernet adapter, a dock, or none.
 
-## Partner (ODM) selection
+## Partner selection
+
+OpenStick needs a **design house or ODM that certifies a customer-designed board** (not only its own white-label designs), plus a chip vendor whose terms allow publishing the board.
 
 Criteria:
 
-1. Holds current Google TV / Android TV certification for a recent chip, and can certify a new brand.
+1. Has certified Android TV / Google TV devices for a recent chip, and will certify a board OpenStick designs and publishes.
+1a. Accepts an owner-unlockable bootloader on the shipped device.
 2. Handles Widevine L1 provisioning and Netflix certification, or has done so for other brands.
 3. Will build a custom enclosure and remote and preinstall OpenStick system apps with the privileges they need (local API, CEC, launcher).
 4. Commits in contract to security patches for five years, with OTA infrastructure and a process for OpenStick app updates.
@@ -175,13 +183,13 @@ Process: shortlist 3 to 5 ODMs, request certified reference designs and certific
 
 ## Milestones
 
-`Partner search → [gate 1] → Samples and platform tier → [gate 2] → Open layer alpha → [gate 3] → Certification and beta → [gate 4] → Launch`
+`Partner search → [gate 1] → Samples and platform tier → [gate 2] → Board design and open layer alpha → [gate 3] → Certification and beta → [gate 4] → Launch`
 
 | Phase | Scope | Exit gate |
 | --- | --- | --- |
-| Partner search | Shortlist ODMs; collect certification history, tiers offered, MOQ; approach Google about Operator Tier | Two ODMs with signed NDAs and quotes |
+| Partner search | Chip vendors that allow publishing schematics; design houses that certify customer boards; tiers offered, MOQ; approach Google about Operator Tier | A chip and a design house that both accept open schematics and owner unlock |
 | Samples and platform tier | Engineering samples; 4K service tests on reference units; tier decision | Partner chosen; tier decided; contract signed |
-| Open layer alpha | Launcher, `openstickd`, local API, FCast and DLNA receivers, HA integration, HomeKit bridge, privacy disclosure; running on samples | All OpenStick apps pass partner and Google requirements for preinstalled apps |
+| Board design and open layer alpha | OpenStick mainboard from the reference design, published; launcher, `openstickd`, local API, FCast and DLNA receivers, HA integration, HomeKit bridge, privacy disclosure; running on samples | All OpenStick apps pass partner and Google requirements for preinstalled apps |
 | Certification and beta | Partner runs Google, Widevine, Netflix certification on the OpenStick SKU; enclosure and remote tooling; FCC/CE; 50 to 100 beta units | All certifications passed; beta blockers closed |
 | Launch | Production run, store, support | Units shipped |
 
@@ -189,7 +197,7 @@ Process: shortlist 3 to 5 ODMs, request certified reference designs and certific
 
 The site stays on Astro, Starlight and React Three Fiber. Changes:
 
-- The exploded view shows the real device teardown: published enclosure parts and the partner mainboard (shown, not open).
+- The exploded view shows the real device teardown, built from the published board and enclosure files.
 - The "Build it" path becomes "Docs": setup, integrations, local API, and the open-source components.
 - The service chart shows 4K for certified services, and states plainly which parts are open and which are not.
 - "Buy" appears only once units exist.
@@ -198,7 +206,9 @@ The site stays on Astro, Starlight and React Three Fiber. Changes:
 
 | Risk | Likelihood | Impact | Mitigation |
 | --- | --- | --- | --- |
-| No ODM will certify a new small brand at viable volume | Medium | No product | Shortlist several; consider launching on an existing certified SKU with custom enclosure and apps |
+| No chip vendor allows publishing schematics | Medium-high | Board can't be fully open | Ask every vendor early; fall back to publishing everything except NDA-covered parts, stated plainly |
+| No design house will certify a customer-designed, owner-unlockable board at viable volume | Medium | No product | Shortlist several; fall back to a white-label certified board with open case and apps |
+| Certifying a new board design costs more and takes longer than a white-label | High | Budget and schedule | Base the board closely on the certified reference design |
 | Operator Tier not available | High | Launcher only as an app; weaker differentiation | Lead with integrations, open casting and privacy defaults; launcher as an app still works |
 | Netflix certification delay or refusal | Medium | Headline feature missing | Make it a launch gate; partner's certification history is a selection criterion |
 | Google requirements conflict with privacy claims | High | Claims become misleading | Claims cover OpenStick software only; disclosure screen; legal review of all privacy copy |
@@ -223,7 +233,9 @@ The site stays on Astro, Starlight and React Three Fiber. Changes:
 
 ## Open questions
 
-- [ ] Which ODMs can certify a new brand, on which chip, at what MOQ?
+- [ ] Which chip vendors allow publishing board schematics?
+- [ ] Which design houses certify a customer-designed board, at what MOQ?
+- [ ] Does Google's Android TV certification allow an owner-unlockable bootloader?
 - [ ] Can OpenStick get Android TV Operator Tier?
 - [ ] Netflix: does the partner's certification cover a new brand, or must OpenStick join Netflix's partner programme?
 - [ ] Which Google privacy defaults can the brand set?
