@@ -1,6 +1,6 @@
 # 0004. Stick form factor or 4K YouTube everywhere
 
-Status: proposed · Date: 2026-10-20
+Status: superseded by [0008](0008-certified-base-open-layer.md) · Date: 2026-10-20
 
 ## Context
 

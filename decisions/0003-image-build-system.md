@@ -1,6 +1,6 @@
 # 0003. Image build system
 
-Status: proposed · Date: 2026-10-20
+Status: superseded by [0008](0008-certified-base-open-layer.md) · Date: 2026-10-20
 
 ## Context
 

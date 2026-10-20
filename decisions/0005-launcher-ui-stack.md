@@ -1,6 +1,6 @@
 # 0005. Launcher UI stack
 
-Status: proposed · Date: 2026-10-20
+Status: accepted (resolved by [0008](0008-certified-base-open-layer.md)) · Date: 2026-10-20
 
 ## Options
 
@@ -10,3 +10,7 @@ Status: proposed · Date: 2026-10-20
 ## Decision
 
 Pending a RAM and cold-start test on the smallest v1 board.
+
+## Resolution (2026-10-20)
+
+With the certified Android TV base (0008), the launcher is a native Android TV app in Kotlin with Compose for TV.

@@ -1,6 +1,6 @@
 # 0002. Google Chrome, not Chromium, for web apps
 
-Status: accepted · Date: 2026-10-20
+Status: superseded by [0008](0008-certified-base-open-layer.md) · Date: 2026-10-20
 
 ## Context
 
