@@ -143,6 +143,15 @@ Product rules:
 - Matter: Google TV devices can act as Matter controllers through Google Home. OpenStick additionally exposes the TV as a Matter video player if the platform allows it **(verify)**.
 - HomeKit: Television accessory via HAP from `openstickd`. Commercial use needs MFi or a legal position (see Legal).
 
+**Web app tiles (for unlocked and self-built units).** When an owner unlocks their unit, or builds a board from the published files, the native streaming apps lose 4K and may refuse to run. Web app tiles keep those services usable at the quality a browser is allowed:
+
+- One tile per service (Netflix, HBO Max, Disney+, Prime Video, Apple TV+, YouTube), each opening the service's own website full-screen in Google Chrome with its own isolated browser profile. Google Chrome is required because its DRM module is the only one licensed for this; Chromium with a borrowed module is not allowed.
+- Each tile is an installable web app (manifest and icon) so it launches like an app from the OpenStick launcher. A service worker only serves the tile's own launch shell and offline "no connection" page; it never touches the service's pages, video or DRM, and cannot raise quality.
+- Remote control: the d-pad and media keys map to the keyboard and pointer input the sites already accept. OpenStick does not inject scripts into, restyle, or change the services' pages, and does not fake a TV or other device identity to them.
+- Every tile shows its real ceiling ("Netflix, up to 720p in a browser"), using the same weekly automated checks as the native apps. HBO Max caps its website at 720p on every device; Disney+ offers no 4K in any computer browser; Prime Video gives SD in Chrome on Linux.
+- On locked, certified units the native apps are the default and the tiles are hidden, except for a service with no Android TV app.
+- Applies to: OpenStick's unlocked Android build and the open Linux build described in [PRD.open-linux-edition.md](PRD.open-linux-edition.md).
+
 **Privacy.** OpenStick apps send nothing. At first run, a plain-language screen lists what Google and the streaming apps collect and links to each control; every optional Google setting (usage and diagnostics, personalised ads, ambient data) defaults to off where the platform permits **(verify which defaults the tier allows the brand to set)**.
 
 ## Hardware
@@ -236,6 +245,7 @@ The site stays on Astro, Starlight and React Three Fiber. Changes:
 - [ ] Which chip vendors allow publishing board schematics?
 - [ ] Which design houses certify a customer-designed board, at what MOQ?
 - [ ] Does Google's Android TV certification allow an owner-unlockable bootloader?
+- [ ] Do the services' terms allow launching their websites as full-screen web app tiles on a TV device?
 - [ ] Can OpenStick get Android TV Operator Tier?
 - [ ] Netflix: does the partner's certification cover a new brand, or must OpenStick join Netflix's partner programme?
 - [ ] Which Google privacy defaults can the brand set?
